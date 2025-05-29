@@ -8,16 +8,27 @@ const app = express()
 app.use(express.json())
 
 app.post('/api/users', async (req, res, _) => {
-    const {first_name, email, last_name, active} = req.body
+    const {first_name, email, last_name, active, country} = req.body
     const newUser = await prisma.user.create({
         data: {
             first_name,
             email,
             last_name,
-            active
+            active,
+            country
         },
     });
     res.status(201).json(newUser)
+})
+
+app.get('/api/countryUsers', async (req, res, _) => {
+    const {country} = req.query
+    const users = await prisma.user.findMany({
+        where: {
+            country: country as string
+        }
+    })
+    res.status(200).json(users)
 })
 
 app.get('/api/health', (_, res, __) => {

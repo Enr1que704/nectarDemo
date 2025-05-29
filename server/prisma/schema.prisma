@@ -16,6 +16,7 @@ model User {
   last_name  String
   username   String? // the `?` here allows this field to be nullable
   email      String
+  country    String   // standard 2 letter country code
   active     Boolean
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
