@@ -34,6 +34,7 @@ const props = defineProps<{
                     <h3 class="user-name">{{ user.first_name }} {{ user.last_name }}</h3>
                     <p class="user-email">{{ user.email }}</p>
                     <p class="user-country">Country: {{ user.country }}</p>
+                    <p class="user-username">Username: {{ user.username ? user.username : 'N/A' }}</p>
                     <span :class="['status-badge', user.active ? 'active' : 'inactive']">
                         {{ user.active ? 'Active' : 'Inactive' }}
                     </span>

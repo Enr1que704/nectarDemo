@@ -8,12 +8,13 @@ const app = express()
 app.use(express.json())
 
 app.post('/api/users', async (req, res, _) => {
-    const {first_name, email, last_name, active, country} = req.body
+    const {first_name, email, last_name, active, country, username} = req.body
     const newUser = await prisma.user.create({
         data: {
             first_name,
             email,
             last_name,
+            username,
             active,
             country
         },

@@ -5,6 +5,7 @@ const firstName = ref('');
 const lastName = ref('');
 const email = ref('');
 const country = ref('');
+const userName = ref('');
 const active = ref(true);
 const isSubmitting = ref(false);
 const successMessage = ref('');
@@ -60,6 +61,7 @@ const addUser = async () => {
                 first_name: firstName.value,
                 last_name: lastName.value, 
                 email: email.value,
+                username: userName.value,
                 country: country.value,
                 active: active.value
             }),
@@ -120,6 +122,15 @@ const addUser = async () => {
                         required
                     />
                 </div>
+
+                <div class="form-group">
+                    <label for="userName">Username</label>
+                    <input 
+                        id="userName"
+                        type="text"
+                        v-model="userName"
+                    />
+                </div>
                 <!-- TODO: Add country dropdown -->
                 <div class="form-group">
                     <label for="country">Country</label>
@@ -153,7 +164,7 @@ const addUser = async () => {
 
             <div v-if="errorMessages.length > 0" class="error-message">
                 <ul>
-                    <li v-for="error in errorMessages" :key="error">
+                    <li v-for="error in errorMessages" v-bind:key="error">
                         {{ error }}
                     </li>
                 </ul>
