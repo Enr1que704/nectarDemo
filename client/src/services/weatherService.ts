@@ -1,4 +1,4 @@
-import type { Zone, ZoneForecast } from "@/types/weather";
+import type { Forecast, Period, Zone, ZoneForecast } from "@/types/weather";
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
@@ -39,14 +39,26 @@ export const weatherService = {
             for (let i = 0; i < zoneIds.length; i++) {
                 const zoneForecastResponse = await fetch(`${API_BASE_URL}/weather/zoneForecast?zoneId=${zoneIds[i].zoneId}`);
                 const zoneForecastData = await zoneForecastResponse.json();
-                let data: ZoneForecast = {
-                    zoneId: zoneIds[i].zoneId,
-                    zoneName: zoneIds[i].zoneName,
-                    forecast: zoneForecastData.properties.periods
+                let periods: Period[] = []
+                for (let j = 0; j < zoneForecastData.properties.periods.length; j++) {
+                    let period: Period = {
+                        number: zoneForecastData.properties.periods[j].number,
+                        name: zoneForecastData.properties.periods[j].name,
+                        detailedForecast: zoneForecastData.properties.periods[j].detailedForecast
+                    }
+                    periods.push(period);
                 }
-                zoneForecasts.push(data);
+            let forecast: Forecast = {
+                periods: periods
             }
+            let data: ZoneForecast = {
+                zoneId: zoneIds[i].zoneId,
+                zoneName: zoneIds[i].zoneName,
+                forecast: forecast
+            }
+            zoneForecasts.push(data);
             return zoneForecasts;
+        }
         } catch (error) {
             console.error('Error fetching weather data:', error);
             throw error;

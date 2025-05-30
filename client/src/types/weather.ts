@@ -6,6 +6,16 @@ export interface Zone {
 export interface ZoneForecast {
     zoneId: string;
     zoneName: string;
-    forecast: any[];
+    forecast: Forecast;
+}
+
+export interface Forecast {
+    periods: Period[];
+}
+
+export interface Period {
+    number: number;
+    name: string
+    detailedForecast: string;
 }
 

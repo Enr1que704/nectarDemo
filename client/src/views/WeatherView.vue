@@ -25,9 +25,9 @@ onMounted(async () => {
                 <div v-for="zone in weather" :key="zone.zoneId" class="weather-zone">
                     <h2>{{ zone.zoneName }}</h2>
                     <div class="forecast-cards">
-                        <div v-for="forecast in zone.forecast" :key="forecast.number" class="forecast-card">
-                            <h3>{{ forecast.name }}</h3>
-                            <p>{{ forecast.detailedForecast }}</p>
+                        <div v-for="period in zone.forecast.periods" :key="period.number" class="forecast-card">
+                            <h3>{{ period.name }}</h3>
+                            <p>{{ period.detailedForecast }}</p>
                         </div>
                     </div>
                 </div>
