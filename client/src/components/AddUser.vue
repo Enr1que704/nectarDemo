@@ -18,12 +18,47 @@ const active = ref(true);
 const users = ref<User[]>([]);
 const isSubmitting = ref(false);
 const successMessage = ref('');
+const errorMessages = ref<string[]>([]);
+
+const validateInput = () => {
+    const nameRegex = /^[A-Za-z]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const countryRegex = /^[A-Za-z]{2}$/;
+    const errors: string[] = [];
+
+    if (!nameRegex.test(firstName.value)) {
+        errors.push('First name must contain only alphabetic characters');
+    }
+    if (!nameRegex.test(lastName.value)) {
+        errors.push('Last name must contain only alphabetic characters');
+    }
+    if (!emailRegex.test(email.value)) {
+        errors.push('Invalid email format');
+    }
+    if (!countryRegex.test(country.value)) {
+        errors.push('Country must be exactly 2 alphabetic characters');
+    }
+    if (typeof active.value !== 'boolean') {
+        errors.push('Active must be true or false');
+    }
+
+    if (errors.length > 0) {
+        errorMessages.value = errors;
+        return false;
+    }
+    return true;
+}
 
 const addUser = async () => {
     isSubmitting.value = true;
     successMessage.value = '';
+    errorMessages.value = [];
     
     try {
+        if (!validateInput()) {
+            return;
+        }
+
         const response = await fetch('http://localhost:3001/api/users', {
             method: 'POST',
             headers: {
@@ -49,8 +84,9 @@ const addUser = async () => {
         active.value = true;
         
         successMessage.value = 'User added successfully!';
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error adding user:', error);
+        errorMessages.value = error.message || ['Error adding user'];
     } finally {
         isSubmitting.value = false;
     }
@@ -77,7 +113,6 @@ const getUsers = () => {
                         id="firstName"
                         type="text" 
                         v-model="firstName" 
-                        placeholder="Enter first name"
                         required
                     />
                 </div>
@@ -88,7 +123,6 @@ const getUsers = () => {
                         id="lastName"
                         type="text" 
                         v-model="lastName" 
-                        placeholder="Enter last name"
                         required
                     />
                 </div>
@@ -99,7 +133,6 @@ const getUsers = () => {
                         id="email"
                         type="email" 
                         v-model="email" 
-                        placeholder="Enter email address"
                         required
                     />
                 </div>
@@ -110,7 +143,6 @@ const getUsers = () => {
                         id="country"
                         type="text" 
                         v-model="country" 
-                        placeholder="Enter country"
                         required
                     />
                 </div>
@@ -135,6 +167,13 @@ const getUsers = () => {
                 </button>
             </form>
 
+            <div v-if="errorMessages.length > 0" class="error-message">
+                <ul>
+                    <li v-for="error in errorMessages" :key="error">
+                        {{ error }}
+                    </li>
+                </ul>
+            </div>
             <div v-if="successMessage" class="success-message">
                 {{ successMessage }}
             </div>
@@ -241,6 +280,15 @@ input[type="checkbox"] {
     padding: 0.75rem;
     background-color: #c6f6d5;
     color: #2f855a;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.error-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f6d5d5;
+    color: #852f2f;
     border-radius: 4px;
     text-align: center;
 }
