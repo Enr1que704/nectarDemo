@@ -1,21 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
-interface User {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    country: string;
-    active: boolean;
-}
+import { ref, computed } from 'vue';
 
 const firstName = ref('');
 const lastName = ref('');
 const email = ref('');
 const country = ref('');
 const active = ref(true);
-const users = ref<User[]>([]);
 const isSubmitting = ref(false);
 const successMessage = ref('');
 const errorMessages = ref<string[]>([]);
@@ -48,6 +38,8 @@ const validateInput = () => {
     }
     return true;
 }
+
+
 
 const addUser = async () => {
     isSubmitting.value = true;
@@ -91,14 +83,6 @@ const addUser = async () => {
         isSubmitting.value = false;
     }
 }
-
-const getUsers = () => {
-    fetch('http://localhost:3001/api/countryUsers?country=US')
-    .then(response => response.json())
-    .then(data => {
-        users.value = data;
-    })
-}
 </script>
 
 <template>
@@ -136,7 +120,7 @@ const getUsers = () => {
                         required
                     />
                 </div>
-
+                <!-- TODO: Add country dropdown -->
                 <div class="form-group">
                     <label for="country">Country</label>
                     <input 
@@ -157,11 +141,11 @@ const getUsers = () => {
                         <span>Active User</span>
                     </label>
                 </div>
-
+                <!-- TODO: Disable button until all fields are filled or valid -->
                 <button 
                     type="submit" 
                     class="submit-button"
-                    :disabled="isSubmitting"
+                    v-bind:disabled="isSubmitting"
                 >
                     {{ isSubmitting ? 'Adding User...' : 'Add User' }}
                 </button>
@@ -179,6 +163,7 @@ const getUsers = () => {
             </div>
         </div>
     </div>
+    <!-- <UserList /> -->
 </template>
 
 <style scoped>

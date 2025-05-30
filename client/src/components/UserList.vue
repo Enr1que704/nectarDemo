@@ -1,35 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import type { User } from '../types/user';
 
-interface User {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    country: string;
-    active: boolean;
-}
 
-const users = ref<User[]>([]);
-const loading = ref(true);
-const error = ref('');
+// Define props with type and default value
+const props = defineProps<{
+    users: User[];
+    loading?: boolean;
+    error?: string;
+}>();
 
-const fetchUsers = async () => {
-    try {
-        const response = await fetch('http://localhost:3001/api/users');
-        const data = await response.json();
-        users.value = data;
-    } catch (err) {
-        error.value = 'Failed to fetch users';
-        console.error('Error fetching users:', err);
-    } finally {
-        loading.value = false;
-    }
-};
-
-onMounted(() => {
-    fetchUsers();
-});
 </script>
 
 <template>
@@ -49,7 +29,7 @@ onMounted(() => {
         </div>
         
         <div v-else class="user-grid">
-            <div v-for="user in users" :key="user.id" class="user-card">
+            <div v-for="user in props.users" :key="user.id" class="user-card">
                 <div class="user-info">
                     <h3 class="user-name">{{ user.first_name }} {{ user.last_name }}</h3>
                     <p class="user-email">{{ user.email }}</p>
