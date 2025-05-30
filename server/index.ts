@@ -29,6 +29,22 @@ app.get('/api/countryUsers', async (req, res, _) => {
     res.status(200).json(users)
 })
 
+app.get('/api/weather/stateZones', async (req, res, _) => {
+    const {state} = req.query;
+    console.log(state)
+    const weather = await fetch(`https://api.weather.gov/zones/?area=${state}&type=forecast&include_geometry=false`)
+    const weatherData = await weather.json()
+    res.status(200).json(weatherData)
+})
+
+app.get('/api/weather/zoneForecast', async (req, res, _) => {
+    const {zoneId} = req.query;
+    console.log(zoneId)
+    const weather = await fetch(`https://api.weather.gov/zones/feature/${zoneId}/forecast`)
+    const weatherData = await weather.json()
+    res.status(200).json(weatherData)
+})
+
 app.get('/api/health', (_, res, __) => {
     res.sendStatus(200);
 })
