@@ -11,6 +11,8 @@ const isSubmitting = ref(false);
 const successMessage = ref('');
 const errorMessages = ref<string[]>([]);
 
+// TODO: 1. Investigate zod?
+// TODO: 2. Add validation field by field, not at the end (because that's annoying)
 const validateInput = () => {
     const nameRegex = /^[A-Za-z]+$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -92,7 +94,7 @@ const addUser = async () => {
         <div class="form-card">
             <h1 class="form-title">Add New User</h1>
             
-            <form @submit.prevent="addUser" class="user-form">
+            <form @submit.prevent="addUser" class="user-form"> <!-- submit form, prevent page refresh which allows for form validation and error handling -->
                 <div class="form-group">
                     <label for="firstName">First Name</label>
                     <input 
