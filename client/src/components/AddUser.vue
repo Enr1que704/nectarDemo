@@ -196,7 +196,7 @@ const getUsers = () => {
 }
 
 .form-title {
-    color: #2c3e50;
+    color: #1A2238;  /* Nectar Navy */
     margin-bottom: 2rem;
     text-align: center;
     font-size: 1.8rem;
@@ -215,7 +215,7 @@ const getUsers = () => {
 }
 
 label {
-    color: #4a5568;
+    color: #1A2238;  /* Nectar Navy */
     font-weight: 500;
     font-size: 0.9rem;
 }
@@ -232,8 +232,8 @@ input[type="email"] {
 input[type="text"]:focus,
 input[type="email"]:focus {
     outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    border-color: #F26A3E;  /* Nectar Orange 1 */
+    box-shadow: 0 0 0 3px rgba(242, 106, 62, 0.1);
 }
 
 .checkbox-group {
@@ -254,7 +254,7 @@ input[type="checkbox"] {
 }
 
 .submit-button {
-    background-color: #4299e1;
+    background-color: #F26A3E;  /* Nectar Orange 1 */
     color: white;
     padding: 0.75rem 1.5rem;
     border: none;
@@ -267,29 +267,27 @@ input[type="checkbox"] {
 }
 
 .submit-button:hover {
-    background-color: #3182ce;
+    background-color: #F47C4E;  /* Nectar Orange 2 */
 }
 
 .submit-button:disabled {
-    background-color: #a0aec0;
+    background-color: #F6956C;  /* Nectar Peach */
     cursor: not-allowed;
 }
 
 .success-message {
+    color: #1A2238;  /* Nectar Navy */
     margin-top: 1rem;
-    padding: 0.75rem;
-    background-color: #c6f6d5;
-    color: #2f855a;
+    padding: 1rem;
+    background-color: rgba(26, 34, 56, 0.1);
     border-radius: 4px;
-    text-align: center;
 }
 
 .error-message {
+    color: #F26A3E;  /* Nectar Orange 1 */
     margin-top: 1rem;
-    padding: 0.75rem;
-    background-color: #f6d5d5;
-    color: #852f2f;
+    padding: 1rem;
+    background-color: rgba(242, 106, 62, 0.1);
     border-radius: 4px;
-    text-align: center;
 }
 </style>

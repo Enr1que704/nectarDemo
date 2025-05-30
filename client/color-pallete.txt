@@ -1,0 +1,4 @@
+Nectar Orange 1	#F26A3E	rgb(242, 106, 62)	Primary flame/leaf element
+Nectar Orange 2	#F47C4E	rgb(244, 124, 78)	Gradient transition (middle)
+Nectar Peach	#F6956C	rgb(246, 149, 108)	Lighter flame/leaf element
+Nectar Navy	#1A2238	rgb(26, 34, 56)	Text color (“nectar” wordmark)

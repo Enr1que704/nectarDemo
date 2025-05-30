@@ -48,7 +48,7 @@ import { RouterLink } from 'vue-router'
 
 .nav-link {
   text-decoration: none;
-  color: #333;
+  color: #1A2238;  /* Nectar Navy */
   font-weight: 500;
   padding: 0.5rem 0;
   position: relative;
@@ -56,7 +56,7 @@ import { RouterLink } from 'vue-router'
 }
 
 .nav-link:hover {
-  color: #4a90e2;
+  color: #F26A3E;  /* Nectar Orange 1 */
 }
 
 .nav-link::after {
@@ -66,7 +66,7 @@ import { RouterLink } from 'vue-router'
   height: 2px;
   bottom: 0;
   left: 0;
-  background-color: #4a90e2;
+  background-color: #F26A3E;  /* Nectar Orange 1 */
   transition: width 0.3s ease;
 }
 
