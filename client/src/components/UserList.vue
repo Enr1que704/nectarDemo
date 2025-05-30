@@ -66,28 +66,28 @@ onMounted(() => {
 <style scoped>
 .user-list-container {
     max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    margin: var(--spacing-large) auto;
+    padding: 0 var(--spacing-medium);
 }
 
 .list-title {
-    color: #1A2238;  /* Nectar Navy */
-    margin-bottom: 2rem;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-large);
     font-size: 1.8rem;
 }
 
 .user-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    gap: var(--spacing-medium);
 }
 
 .user-card {
-    background: white;
-    border-radius: 8px;
+    background: var(--background-color);
+    border-radius: var(--border-radius-medium);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
+    padding: var(--spacing-medium);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .user-card:hover {
@@ -96,60 +96,60 @@ onMounted(() => {
 }
 
 .user-name {
-    color: #1A2238;  /* Nectar Navy */
-    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    margin: 0 0 var(--spacing-small) 0;
     font-size: 1.2rem;
 }
 
 .user-email {
-    color: #1A2238;  /* Nectar Navy */
-    margin: 0.5rem 0;
+    color: var(--text-color);
+    margin: var(--spacing-small) 0;
     font-size: 0.9rem;
 }
 
 .user-country {
-    color: #1A2238;  /* Nectar Navy */
-    margin: 0.5rem 0;
+    color: var(--text-color);
+    margin: var(--spacing-small) 0;
     font-size: 0.9rem;
 }
 
 .status-badge {
     display: inline-block;
-    padding: 0.25rem 0.75rem;
+    padding: var(--spacing-small) var(--spacing-medium);
     border-radius: 999px;
     font-size: 0.8rem;
     font-weight: 500;
 }
 
 .status-badge.active {
-    background-color: rgba(242, 106, 62, 0.1);  /* Nectar Orange 1 with opacity */
-    color: #F26A3E;  /* Nectar Orange 1 */
+    background-color: rgba(242, 106, 62, 0.1);
+    color: var(--primary-color);
 }
 
 .status-badge.inactive {
-    background-color: rgba(26, 34, 56, 0.1);  /* Nectar Navy with opacity */
-    color: #1A2238;  /* Nectar Navy */
+    background-color: rgba(26, 34, 56, 0.1);
+    color: var(--text-color);
 }
 
 .loading {
-    color: #1A2238;  /* Nectar Navy */
+    color: var(--text-color);
     text-align: center;
-    padding: 2rem;
+    padding: var(--spacing-large);
 }
 
 .error-message {
-    color: #F26A3E;  /* Nectar Orange 1 */
+    color: var(--primary-color);
     background-color: rgba(242, 106, 62, 0.1);
-    padding: 1rem;
-    border-radius: 4px;
+    padding: var(--spacing-medium);
+    border-radius: var(--border-radius-small);
     text-align: center;
 }
 
 .no-users {
-    color: #1A2238;  /* Nectar Navy */
+    color: var(--text-color);
     text-align: center;
-    padding: 2rem;
+    padding: var(--spacing-large);
     background-color: rgba(26, 34, 56, 0.1);
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
 }
 </style>

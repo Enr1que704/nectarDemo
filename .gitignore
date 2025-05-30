@@ -2,7 +2,8 @@ client/node_modules
 client/package-lock.json
 server/node_modules
 server/package-lock.json
-/dist/*
+dist/
+
 
 server/.env
 .DS_STORE
@@ -37,3 +38,4 @@ client/*.sln
 client/*.sw?
 
 client/*.tsbuildinfo
+dist/index.html

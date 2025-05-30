@@ -1,12 +1,17 @@
 <script setup lang="ts">
+// No setup needed for simple welcome message
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="greetings">
+    <h1>Welcome to the About Page</h1>
   </div>
 </template>
 
-<style>
-
+<style scoped>
+.greetings {
+  text-align: center;
+  margin-top: 20px;
+  color: #1A2238;  /* Nectar Navy */
+}
 </style>

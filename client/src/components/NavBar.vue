@@ -19,9 +19,9 @@ import { RouterLink } from 'vue-router'
 
 <style scoped>
 .navbar {
-  background-color: #ffffff;
+  background-color: var(--background-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem 2rem;
+  padding: var(--spacing-medium) var(--spacing-large);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -42,21 +42,21 @@ import { RouterLink } from 'vue-router'
 
 .nav-links {
   display: flex;
-  gap: 2rem;
+  gap: var(--spacing-large);
   align-items: center;
 }
 
 .nav-link {
   text-decoration: none;
-  color: #1A2238;  /* Nectar Navy */
+  color: var(--text-color);
   font-weight: 500;
-  padding: 0.5rem 0;
+  padding: var(--spacing-small) 0;
   position: relative;
-  transition: color 0.3s ease;
+  transition: color var(--transition-normal);
 }
 
 .nav-link:hover {
-  color: #F26A3E;  /* Nectar Orange 1 */
+  color: var(--primary-color);
 }
 
 .nav-link::after {
@@ -66,8 +66,8 @@ import { RouterLink } from 'vue-router'
   height: 2px;
   bottom: 0;
   left: 0;
-  background-color: #F26A3E;  /* Nectar Orange 1 */
-  transition: width 0.3s ease;
+  background-color: var(--primary-color);
+  transition: width var(--transition-normal);
 }
 
 .nav-link:hover::after {
@@ -77,12 +77,12 @@ import { RouterLink } from 'vue-router'
 @media (max-width: 768px) {
   .nav-content {
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--spacing-medium);
   }
 
   .nav-links {
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--spacing-medium);
   }
 }
 </style> 

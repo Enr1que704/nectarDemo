@@ -184,20 +184,20 @@ const getUsers = () => {
 <style scoped>
 .add-user-container {
     max-width: 600px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    margin: var(--spacing-large) auto;
+    padding: 0 var(--spacing-medium);
 }
 
 .form-card {
-    background: white;
-    border-radius: 8px;
+    background: var(--background-color);
+    border-radius: var(--border-radius-medium);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
+    padding: var(--spacing-large);
 }
 
 .form-title {
-    color: #1A2238;  /* Nectar Navy */
-    margin-bottom: 2rem;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-large);
     text-align: center;
     font-size: 1.8rem;
 }
@@ -205,45 +205,45 @@ const getUsers = () => {
 .user-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--spacing-medium);
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--spacing-small);
 }
 
 label {
-    color: #1A2238;  /* Nectar Navy */
+    color: var(--text-color);
     font-weight: 500;
     font-size: 0.9rem;
 }
 
 input[type="text"],
 input[type="email"] {
-    padding: 0.75rem;
+    padding: var(--spacing-medium);
     border: 1px solid #e2e8f0;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
     font-size: 1rem;
-    transition: border-color 0.2s;
+    transition: border-color var(--transition-fast);
 }
 
 input[type="text"]:focus,
 input[type="email"]:focus {
     outline: none;
-    border-color: #F26A3E;  /* Nectar Orange 1 */
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(242, 106, 62, 0.1);
 }
 
 .checkbox-group {
-    margin-top: 0.5rem;
+    margin-top: var(--spacing-small);
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacing-small);
     cursor: pointer;
 }
 
@@ -254,40 +254,50 @@ input[type="checkbox"] {
 }
 
 .submit-button {
-    background-color: #F26A3E;  /* Nectar Orange 1 */
+    background-color: var(--primary-color);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: var(--spacing-medium);
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 1rem;
+    transition: background-color var(--transition-fast);
 }
 
 .submit-button:hover {
-    background-color: #F47C4E;  /* Nectar Orange 2 */
+    background-color: var(--secondary-color);
 }
 
 .submit-button:disabled {
-    background-color: #F6956C;  /* Nectar Peach */
+    background-color: #ccc;
     cursor: not-allowed;
 }
 
-.success-message {
-    color: #1A2238;  /* Nectar Navy */
-    margin-top: 1rem;
-    padding: 1rem;
-    background-color: rgba(26, 34, 56, 0.1);
-    border-radius: 4px;
+.error-message {
+    margin-top: var(--spacing-medium);
+    padding: var(--spacing-medium);
+    background-color: rgba(242, 106, 62, 0.1);
+    border-radius: var(--border-radius-small);
+    color: var(--primary-color);
 }
 
-.error-message {
-    color: #F26A3E;  /* Nectar Orange 1 */
-    margin-top: 1rem;
-    padding: 1rem;
-    background-color: rgba(242, 106, 62, 0.1);
-    border-radius: 4px;
+.error-message ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.error-message li {
+    margin-bottom: var(--spacing-small);
+}
+
+.success-message {
+    margin-top: var(--spacing-medium);
+    padding: var(--spacing-medium);
+    background-color: rgba(76, 175, 80, 0.1);
+    border-radius: var(--border-radius-small);
+    color: var(--success-color);
+    text-align: center;
 }
 </style>
