@@ -22,7 +22,7 @@ app.post('/api/users', async (req, res, _) => {
     res.status(201).json(newUser)
 })
 
-app.get('/api/countryUsers', async (req, res, _) => {
+app.get('/api/user/country', async (req, res, _) => {
     const {country} = req.query;
     console.log(country)
     const users = await prisma.user.findMany({
@@ -32,6 +32,25 @@ app.get('/api/countryUsers', async (req, res, _) => {
     })
     res.status(200).json(users)
 })
+
+app.get('/api/user/duplicate', async (_req, res, _) => {
+    const duplicateUsers = await prisma.user.groupBy({
+        by: ['first_name', 'last_name'],
+        _count: {
+          first_name: true,
+        },
+        having: {
+          first_name: {
+            _count: {
+              gt: 1,
+            },
+          },
+        },
+      });
+      
+    res.status(200).json(duplicateUsers)
+})
+
 
 app.get('/api/weather/stateZones', async (req, res, _) => {
     const {state} = req.query;

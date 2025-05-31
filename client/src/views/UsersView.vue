@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import UserList from '../components/UserList.vue';
 import { ref, onMounted } from 'vue';
 import { userService } from '../services/userService';
 import type { User } from '../types/user';
 import SearchableDropdown from '@/components/SearchableDropdown.vue';
 import COUNTRIES from '../data/countries.json';
-
+import DataCard from '@/components/DataCard.vue';
+import UserCard from '@/components/UserCard.vue';
 const users = ref<User[]>([]);
+const duplicates = ref<any[]>([]);
 const loading = ref(false);
 const error = ref<string | undefined>(undefined);
 const country = ref<string>('');
@@ -21,6 +22,9 @@ const fetchUsers = async () => {
         console.error('Error fetching users:', err);
     } finally {
         loading.value = false;
+        if (users.value.length === 0) {
+            error.value = 'No users found';
+        }
     }
 }
 
@@ -34,21 +38,24 @@ const clearList = () => {
     console.log('clearing list');
     country.value = '';
     users.value = [];
+    error.value = undefined;
+    duplicates.value = [];
 }
 
 const showDuplicates = async () => {
+    users.value = [];
+    duplicates.value = [];
     loading.value = true;
     error.value = undefined;
     try {
-        const duplicates = await userService.getDuplicates();
-        for (const duplicate of duplicates) {
-            // console.log(duplicate._count.first_name)
-            const user: User = {
-                ...duplicate,
-                // count: duplicate._count.first_name
+        const users = await userService.getDuplicateUsers();
+        for (let i = 0; i < users.length; i++) {
+            let user = {
+                name: users[i].first_name + ' ' + users[i].last_name,
+                count: users[i]._count.first_name
             }
             console.log(user);
-            users.value.push(user);
+            duplicates.value.push(user);
         }
     } catch (err) {
         error.value = 'Failed to fetch duplicates. Please try again later.';
@@ -65,7 +72,7 @@ const showDuplicates = async () => {
         <div class="header-container">
             <h1 class="user-list-title">User List</h1>
             <button class="duplicates-button" @click="showDuplicates">
-                Show Duplicates!!
+                Show Duplicates
             </button>
         </div>
         <div class="country-selector">
@@ -81,14 +88,25 @@ const showDuplicates = async () => {
                 </button>
             </div>
         </div>
-        <div v-if="!loading && !error && users.length === 0 && country !== ''" class="no-users">
-            {{ country ? `No users found in ${COUNTRIES.find(c => c.value === country)?.label}` : 'No users found' }}
+        <div v-if="error" class="error-message">
+            {{ error }}
         </div>
-        <UserList 
-            :users="users" 
-            :loading="loading"
-            :error="error"
-        />
+        <div v-else-if="users.length > 0" class="user-grid">
+            <UserCard
+                v-for="user in users"
+                :key="user.id"
+                :user="user"
+            />
+        </div>
+        <div v-else-if="duplicates.length > 0">
+            <div class="user-grid">
+                <DataCard
+                    v-for="duplicate in duplicates"
+                    :key="duplicate.name"
+                    :data="duplicate"
+                />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -147,12 +165,21 @@ const showDuplicates = async () => {
     background-color: #e0e0e0;
 }
 
-.no-users {
+.error-message {
     color: var(--text-color);
     text-align: center;
     padding: var(--spacing-large);
     background-color: rgba(26, 34, 56, 0.1);
     border-radius: var(--border-radius-small);
     margin: var(--spacing-medium) 0;
+}
+
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-medium);
+    max-width: 1200px;
+    margin: var(--spacing-large) auto;
+    padding: 0 var(--spacing-medium);
 }
 </style>
