@@ -7,7 +7,7 @@
     <h1>Welcome to the About Page</h1>
   </div>
 </template>
-
+  
 <style scoped>
 .greetings {
   text-align: center;

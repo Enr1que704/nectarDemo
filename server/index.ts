@@ -5,6 +5,14 @@ import path from 'path'
 const prisma = new PrismaClient();
 const app = express()
 
+app.use((req, _res, next) => {
+    const timestamp = new Date().toISOString();
+    const method = req.method;
+    const ip = req.ip || req.socket.remoteAddress;
+    console.log(`[${timestamp}] ${method} ${ip} ${req.url}`);
+    next();
+})
+
 app.use(express.json())
 
 app.post('/api/users', async (req, res, _) => {
@@ -24,7 +32,6 @@ app.post('/api/users', async (req, res, _) => {
 
 app.get('/api/user/country', async (req, res, _) => {
     const {country} = req.query;
-    console.log(country)
     const users = await prisma.user.findMany({
         where: {
             country: country as string
@@ -54,7 +61,6 @@ app.get('/api/user/duplicate', async (_req, res, _) => {
 
 app.get('/api/weather/stateZones', async (req, res, _) => {
     const {state} = req.query;
-    console.log(state)
     const weather = await fetch(`https://api.weather.gov/zones/?area=${state}&type=forecast&include_geometry=false`)
     const weatherData = await weather.json()
     res.status(200).json(weatherData)
@@ -62,7 +68,6 @@ app.get('/api/weather/stateZones', async (req, res, _) => {
 
 app.get('/api/weather/zoneForecast', async (req, res, _) => {
     const {zoneId} = req.query;
-    console.log(zoneId)
     const weather = await fetch(`https://api.weather.gov/zones/feature/${zoneId}/forecast`)
     const weatherData = await weather.json()
     res.status(200).json(weatherData)

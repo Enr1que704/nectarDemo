@@ -24,6 +24,11 @@ const fetchWeather = async (state: string) => {
 const handleStateSelect = (state: string) => {
     fetchWeather(state);
 };
+
+const clearList = () => {
+    selectedState.value = '';
+    weather.value = [];
+};
 </script>
 
 <template>
@@ -31,12 +36,17 @@ const handleStateSelect = (state: string) => {
         <h1 class="weather-title">Weather</h1>
         
         <div class="state-selector">
-            <SearchableDropdown
-                v-bind:items="US_STATES"
-                v-model="selectedState"
-                placeholder="Search for a state..."
-                @select="handleStateSelect"
-            />
+            <div class="dropdown-container">
+                <SearchableDropdown
+                    v-bind:items="US_STATES"
+                    v-model="selectedState"
+                    placeholder="Search for a state..."
+                    @select="handleStateSelect"
+                />
+                <button class="clear-button" @click="clearList">
+                    Clear
+                </button>
+            </div>
         </div>
 
         <div v-if="isLoading">
@@ -165,5 +175,25 @@ const handleStateSelect = (state: string) => {
 .state-selector {
     max-width: 400px;
     margin: 0 auto 20px;
+}
+
+.dropdown-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.clear-button {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clear-button:hover {
+    background-color: #e0e0e0;
 }
 </style>
