@@ -25,7 +25,11 @@ app.post('/api/users', async (req, res, _) => {
 app.get('/api/countryUsers', async (req, res, _) => {
     const {country} = req.query;
     console.log(country)
-    const users = await prisma.user.findMany()
+    const users = await prisma.user.findMany({
+        where: {
+            country: country as string
+        }
+    })
     res.status(200).json(users)
 })
 

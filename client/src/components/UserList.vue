@@ -13,9 +13,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="user-list-container">
-        <h1 class="list-title">User List</h1>
-        
+    <div class="user-list-container">        
         <div v-if="loading" class="loading">
             Loading users...
         </div>

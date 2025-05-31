@@ -1,73 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref } from 'vue';
 import { weatherService } from '../services/weatherService';
 import type { ZoneForecast } from '../types/weather';
-
-const US_STATES = [
-    { value: 'AL', label: 'Alabama' },
-    { value: 'AK', label: 'Alaska' },
-    { value: 'AZ', label: 'Arizona' },
-    { value: 'AR', label: 'Arkansas' },
-    { value: 'CA', label: 'California' },
-    { value: 'CO', label: 'Colorado' },
-    { value: 'CT', label: 'Connecticut' },
-    { value: 'DE', label: 'Delaware' },
-    { value: 'FL', label: 'Florida' },
-    { value: 'GA', label: 'Georgia' },
-    { value: 'HI', label: 'Hawaii' },
-    { value: 'ID', label: 'Idaho' },
-    { value: 'IL', label: 'Illinois' },
-    { value: 'IN', label: 'Indiana' },
-    { value: 'IA', label: 'Iowa' },
-    { value: 'KS', label: 'Kansas' },
-    { value: 'KY', label: 'Kentucky' },
-    { value: 'LA', label: 'Louisiana' },
-    { value: 'ME', label: 'Maine' },
-    { value: 'MD', label: 'Maryland' },
-    { value: 'MA', label: 'Massachusetts' },
-    { value: 'MI', label: 'Michigan' },
-    { value: 'MN', label: 'Minnesota' },
-    { value: 'MS', label: 'Mississippi' },
-    { value: 'MO', label: 'Missouri' },
-    { value: 'MT', label: 'Montana' },
-    { value: 'NE', label: 'Nebraska' },
-    { value: 'NV', label: 'Nevada' },
-    { value: 'NH', label: 'New Hampshire' },
-    { value: 'NJ', label: 'New Jersey' },
-    { value: 'NM', label: 'New Mexico' },
-    { value: 'NY', label: 'New York' },
-    { value: 'NC', label: 'North Carolina' },
-    { value: 'ND', label: 'North Dakota' },
-    { value: 'OH', label: 'Ohio' },
-    { value: 'OK', label: 'Oklahoma' },
-    { value: 'OR', label: 'Oregon' },
-    { value: 'PA', label: 'Pennsylvania' },
-    { value: 'RI', label: 'Rhode Island' },
-    { value: 'SC', label: 'South Carolina' },
-    { value: 'SD', label: 'South Dakota' },
-    { value: 'TN', label: 'Tennessee' },
-    { value: 'TX', label: 'Texas' },
-    { value: 'UT', label: 'Utah' },
-    { value: 'VT', label: 'Vermont' },
-    { value: 'VA', label: 'Virginia' },
-    { value: 'WA', label: 'Washington' },
-    { value: 'WV', label: 'West Virginia' },
-    { value: 'WI', label: 'Wisconsin' },
-    { value: 'WY', label: 'Wyoming' }
-];
+import US_STATES from '../data/states.json';
+import SearchableDropdown from '../components/SearchableDropdown.vue';
 
 let weather = ref<ZoneForecast[]>([]);
 let isLoading = ref<boolean>(false);
 let selectedState = ref('');
-let searchQuery = ref('');
-let isDropdownOpen = ref(false);
-
-const filteredStates = computed(() => {
-    return US_STATES.filter(state => 
-        state.label.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        state.value.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
-});
 
 const fetchWeather = async (state: string) => {
     isLoading.value = true;
@@ -81,23 +21,9 @@ const fetchWeather = async (state: string) => {
     }
 };
 
-const selectState = (state: string) => {
-    selectedState.value = state;
-    isDropdownOpen.value = false;
-    searchQuery.value = '';
+const handleStateSelect = (state: string) => {
     fetchWeather(state);
 };
-
-// ensures the selected dropdown value gets stored before the dropdown closes
-const handleBlur = () => {
-    setTimeout(() => {
-        isDropdownOpen.value = false;
-    }, 200);
-};
-
-// onMounted(() => {
-//     fetchWeather(selectedState.value);
-// });
 </script>
 
 <template>
@@ -105,26 +31,12 @@ const handleBlur = () => {
         <h1 class="weather-title">Weather</h1>
         
         <div class="state-selector">
-            <div class="dropdown-container">
-                <input
-                    type="text"
-                    v-model="searchQuery"
-                    @focus="isDropdownOpen = true"
-                    @blur="handleBlur" 
-                    placeholder="Search for a state..."
-                    class="state-input"
-                />
-                <div v-if="isDropdownOpen" class="dropdown-list">
-                    <div
-                        v-for="state in filteredStates"
-                        :key="state.value"
-                        @mousedown="selectState(state.value)"
-                        class="dropdown-item"
-                    >
-                        {{ state.label }} ({{ state.value }})
-                    </div>
-                </div>
-            </div>
+            <SearchableDropdown
+                v-bind:items="US_STATES"
+                v-model="selectedState"
+                placeholder="Search for a state..."
+                @select="handleStateSelect"
+            />
         </div>
 
         <div v-if="isLoading">
@@ -161,6 +73,7 @@ const handleBlur = () => {
     margin-bottom: 20px;
     text-align: center;
 }
+
 .weather-container {
     display: flex;
     flex-direction: column;
@@ -252,55 +165,5 @@ const handleBlur = () => {
 .state-selector {
     max-width: 400px;
     margin: 0 auto 20px;
-    position: relative;
-}
-
-.dropdown-container {
-    position: relative;
-}
-
-.state-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--accent-color);
-    border-radius: var(--border-radius-large);
-    font-size: 1rem;
-    background-color: var(--background-color);
-    color: var(--text-color);
-}
-
-.state-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
-}
-
-.dropdown-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: 300px;
-    overflow-y: auto;
-    background-color: var(--background-color);
-    border: 1px solid var(--accent-color);
-    border-radius: var(--border-radius-large);
-    margin-top: 4px;
-    z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-item {
-    padding: 10px 12px;
-    cursor: pointer;
-    transition: background-color var(--transition-normal);
-}
-
-.dropdown-item:hover {
-    background-color: var(--secondary-color);
-}
-
-.dropdown-item:active {
-    background-color: var(--accent-color);
 }
 </style>
