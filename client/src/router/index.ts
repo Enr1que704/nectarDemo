@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import WeatherView from '../views/WeatherView.vue'
+import ViewUsers from '../views/ViewUsers.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -20,7 +21,7 @@ const router = createRouter({
     {
       path: '/view-users',
       name: 'view-users',
-      component: () => import('../views/ViewUsers.vue'),
+      component: () => import('../views/UsersView.vue'),
     },
     {
       path: '/add-user',
