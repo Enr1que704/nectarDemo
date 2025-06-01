@@ -35,9 +35,9 @@ export const userService = {
         }
     },
 
-    async getDuplicateUsers(): Promise<any> {
+    async getDuplicateUsers(count: number): Promise<any> {
         try {
-            const response = await fetch(`${API_BASE_URL}/user/duplicate`);
+            const response = await fetch(`${API_BASE_URL}/user/duplicate?count=${count}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

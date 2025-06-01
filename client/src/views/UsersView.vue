@@ -6,12 +6,15 @@ import SearchableDropdown from '@/components/SearchableDropdown.vue';
 import COUNTRIES from '../data/countries.json';
 import DataCard from '@/components/DataCard.vue';
 import UserCard from '@/components/UserCard.vue';
+import Modal from '@/components/Modal.vue';
+
 const users = ref<User[]>([]);
 const duplicates = ref<any[]>([]);
 const loading = ref(false);
 const error = ref<string | undefined>(undefined);
 const country = ref<string>('');
-
+const isModalOpen = ref(false);
+const count = ref('');
 const fetchUsers = async () => {
     loading.value = true;
     error.value = undefined;
@@ -40,15 +43,20 @@ const clearList = () => {
     users.value = [];
     error.value = undefined;
     duplicates.value = [];
+    count.value = '';
 }
 
 const showDuplicates = async () => {
+    isModalOpen.value = true;
+    if (count.value === '') {
+        return;
+    }
     users.value = [];
     duplicates.value = [];
     loading.value = true;
     error.value = undefined;
     try {
-        const users = await userService.getDuplicateUsers();
+        const users = await userService.getDuplicateUsers(parseInt(count.value));
         for (let i = 0; i < users.length; i++) {
             let user = {
                 name: users[i].first_name + ' ' + users[i].last_name,
@@ -98,15 +106,32 @@ const showDuplicates = async () => {
                 :user="user"
             />
         </div>
-        <div v-else-if="duplicates.length > 0">
-            <div class="user-grid">
+
+        <Modal 
+            :is-open="isModalOpen" 
+            title="Duplicate Users"
+            @close="isModalOpen = false"
+        >
+            <div>
+                <input v-model="count" placeholder="More than X duplicates..." @blur="showDuplicates"/>
+            </div>
+            <div v-if="loading" class="loading-message">
+                Loading duplicates...
+            </div>
+            <div v-else-if="error" class="error-message">
+                {{ error }}
+            </div>
+            <div v-else-if="duplicates.length > 0" class="user-grid">
                 <DataCard
                     v-for="duplicate in duplicates"
                     :key="duplicate.name"
                     :data="duplicate"
                 />
             </div>
-        </div>
+            <div v-else class="no-duplicates">
+                No duplicates found
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -181,5 +206,17 @@ const showDuplicates = async () => {
     max-width: 1200px;
     margin: var(--spacing-large) auto;
     padding: 0 var(--spacing-medium);
+}
+
+.loading-message {
+    text-align: center;
+    padding: var(--spacing-large);
+    color: var(--text-color);
+}
+
+.no-duplicates {
+    text-align: center;
+    padding: var(--spacing-large);
+    color: var(--text-color);
 }
 </style>

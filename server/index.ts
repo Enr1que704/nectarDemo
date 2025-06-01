@@ -40,7 +40,8 @@ app.get('/api/user/country', async (req, res, _) => {
     res.status(200).json(users)
 })
 
-app.get('/api/user/duplicate', async (_req, res, _) => {
+app.get('/api/user/duplicate', async (req, res, _) => {
+    const count = parseInt(req.query.count as string);
     const duplicateUsers = await prisma.user.groupBy({
         by: ['first_name', 'last_name'],
         _count: {
@@ -49,7 +50,7 @@ app.get('/api/user/duplicate', async (_req, res, _) => {
         having: {
           first_name: {
             _count: {
-              gt: 1,
+              gt: count
             },
           },
         },
