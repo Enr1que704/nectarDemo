@@ -42,19 +42,22 @@ app.get('/api/user/country', async (req, res, _) => {
 
 app.get('/api/user/duplicate', async (req, res, _) => {
     const count = parseInt(req.query.count as string);
+    const active = req.query.active === 'true' ? true : false;
+    const whereClause = active ? { active: true } : {};              
     const duplicateUsers = await prisma.user.groupBy({
-        by: ['first_name', 'last_name'],
+    by: ['first_name', 'last_name'],
+    where: whereClause,
+    _count: {
+        first_name: true,
+    },
+    having: {
+        first_name: {
         _count: {
-          first_name: true,
+            gt: count,
         },
-        having: {
-          first_name: {
-            _count: {
-              gt: count
-            },
-          },
         },
-      });
+    },
+    });
       
     res.status(200).json(duplicateUsers)
 })

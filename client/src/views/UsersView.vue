@@ -15,6 +15,7 @@ const error = ref<string | undefined>(undefined);
 const country = ref<string>('');
 const isModalOpen = ref(false);
 const count = ref('');
+const active = ref(true);
 const fetchUsers = async () => {
     loading.value = true;
     error.value = undefined;
@@ -51,20 +52,14 @@ const showDuplicates = async () => {
     if (count.value === '') {
         return;
     }
-    // users.value = [];
-    duplicates.value = [];
     loading.value = true;
     error.value = undefined;
     try {
-        const users = await userService.getDuplicateUsers(parseInt(count.value));
-        for (let i = 0; i < users.length; i++) {
-            let user = {
-                name: users[i].first_name + ' ' + users[i].last_name,
-                count: users[i]._count.first_name
-            }
-            console.log(user);
-            duplicates.value.push(user);
-        }
+        const users = await userService.getDuplicateUsers(parseInt(count.value), active.value);
+        duplicates.value = users.map((user: { first_name: string; last_name: string; _count: { first_name: number } }) => ({
+            name: user.first_name + ' ' + user.last_name,
+            count: user._count.first_name
+        }));
     } catch (err) {
         error.value = 'Failed to fetch duplicates. Please try again later.';
         console.error('Error fetching duplicates:', err);
@@ -114,6 +109,7 @@ const showDuplicates = async () => {
         >
             <div>
                 <input v-model="count" placeholder="More than X duplicates..." @blur="showDuplicates"/>
+                <input type="checkbox" v-model="active" @change="showDuplicates" class="active-checkbox"> Active Users Only</input>
             </div>
             <div v-if="error" class="error-message">
                 {{ error }}
@@ -216,4 +212,11 @@ const showDuplicates = async () => {
     padding: var(--spacing-large);
     color: var(--text-color);
 }
+
+.active-checkbox {
+    margin-left: 10px;
+    accent-color: var(--primary-color);
+}
+
+
 </style>

@@ -9,6 +9,27 @@ interface CacheEntry {
     timestamp: number;
 }
 
+interface ZoneFeature {
+    properties: {
+        id: string;
+        name: string;
+    };
+}
+
+interface ZoneData {
+    features: ZoneFeature[];
+}
+
+interface ZoneForecastData {
+    properties: {
+        periods: Array<{
+            number: number;
+            name: string;
+            detailedForecast: string;
+        }>;
+    };
+}
+
 /*
 WEATHER FLOW:
 zones/ - get all state zones
@@ -28,7 +49,7 @@ returns:
 */
 
 export const weatherService = {
-    async getWeatherByState(state: string): Promise<any> {
+    async getWeatherByState(state: string): Promise<ZoneForecast[]> {
         try {
             // Check cache first
             const cacheKey = `${CACHE_KEY_PREFIX}${state}`;
@@ -49,40 +70,35 @@ export const weatherService = {
 
             // If no cache or expired, fetch new data
             const zoneResponse = await fetch(`${API_BASE_URL}/weather/stateZones?state=${state}`);
-            const zoneData = await zoneResponse.json();
-            let zoneIds: Zone[] = []
-            let zoneForecasts: ZoneForecast[] = []
+            const zoneData: ZoneData = await zoneResponse.json();
             
-            for (let i = 0; i < zoneData.features.length; i++) {
-                const zone: Zone = {
-                    zoneId: zoneData.features[i].properties.id,
-                    zoneName: zoneData.features[i].properties.name
-                }
-                zoneIds.push(zone);
-            }
+            // Transform features into zones
+            const zones: Zone[] = zoneData.features.map(feature => ({
+                zoneId: feature.properties.id,
+                zoneName: feature.properties.name
+            }));
             
-            for (let i = 0; i < zoneIds.length; i++) {
-                const zoneForecastResponse = await fetch(`${API_BASE_URL}/weather/zoneForecast?zoneId=${zoneIds[i].zoneId}`);
-                const zoneForecastData = await zoneForecastResponse.json();
-                let periods: Period[] = []
-                for (let j = 0; j < zoneForecastData.properties.periods.length; j++) {
-                    let period: Period = {
-                        number: zoneForecastData.properties.periods[j].number,
-                        name: zoneForecastData.properties.periods[j].name,
-                        detailedForecast: zoneForecastData.properties.periods[j].detailedForecast
-                    }
-                    periods.push(period);
-                }
-                let forecast: Forecast = {
-                    periods: periods
-                }
-                let data: ZoneForecast = {
-                    zoneId: zoneIds[i].zoneId,
-                    zoneName: zoneIds[i].zoneName,
-                    forecast: forecast
-                }
-                zoneForecasts.push(data);
-            }
+            // Fetch all zone forecasts in parallel
+            const zoneForecasts = await Promise.all(
+                zones.map(async (zone) => {
+                    const response = await fetch(`${API_BASE_URL}/weather/zoneForecast?zoneId=${zone.zoneId}`);
+                    const forecastData: ZoneForecastData = await response.json();
+                    
+                    // Transform periods data
+                    const periods: Period[] = forecastData.properties.periods.map(period => ({
+                        number: period.number,
+                        name: period.name,
+                        detailedForecast: period.detailedForecast
+                    }));
+
+                    // Create the zone forecast object
+                    return {
+                        zoneId: zone.zoneId,
+                        zoneName: zone.zoneName,
+                        forecast: { periods }
+                    };
+                })
+            );
             
             // Cache the new data
             const cacheEntry: CacheEntry = {
