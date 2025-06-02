@@ -51,7 +51,7 @@ const showDuplicates = async () => {
     if (count.value === '') {
         return;
     }
-    users.value = [];
+    // users.value = [];
     duplicates.value = [];
     loading.value = true;
     error.value = undefined;
@@ -115,10 +115,7 @@ const showDuplicates = async () => {
             <div>
                 <input v-model="count" placeholder="More than X duplicates..." @blur="showDuplicates"/>
             </div>
-            <div v-if="loading" class="loading-message">
-                Loading duplicates...
-            </div>
-            <div v-else-if="error" class="error-message">
+            <div v-if="error" class="error-message">
                 {{ error }}
             </div>
             <div v-else-if="duplicates.length > 0" class="user-grid">
