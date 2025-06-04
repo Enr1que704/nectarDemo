@@ -1,9 +1,42 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client';
 import path from 'path'
+import { z } from 'zod'
 
 const prisma = new PrismaClient();
 const app = express()
+
+// User validation schema
+const userSchema = z.object({
+    first_name: z.string().min(1, "First name is required").max(50, "First name is too long"),
+    last_name: z.string().min(1, "Last name is required").max(50, "Last name is too long"),
+    email: z.string().email("Invalid email format"),
+    username: z.string().min(0, "Username must be at least 0 characters").max(30, "Username is too long").optional().nullable(),
+    active: z.boolean(),
+    country: z.string().min(2, "Country code is required").max(2, "Country code must be 2 characters")
+});
+
+// Validation middleware
+const validateUser = (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+    try {
+        const validatedData = userSchema.parse(req.body);
+        req.body = validatedData; // Replace request body with validated data
+        next();
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(400).json({
+                error: "Validation failed",
+                details: error.errors.map(err => ({
+                    field: err.path.join('.'),
+                    message: err.message
+                }))
+            });
+            return;
+        }
+        res.status(500).json({ error: "Internal server error" });
+        return;
+    }
+};
 
 app.use((req, _res, next) => {
     const timestamp = new Date().toISOString();
@@ -15,19 +48,31 @@ app.use((req, _res, next) => {
 
 app.use(express.json())
 
-app.post('/api/users', async (req, res, _) => {
-    const {first_name, email, last_name, active, country, username} = req.body
-    const newUser = await prisma.user.create({
-        data: {
-            first_name,
-            email,
-            last_name,
-            username,
-            active,
-            country
-        },
-    });
-    res.status(201).json(newUser)
+app.post('/api/users', validateUser, async (req, res, _) => {
+    try {
+        const {first_name, email, last_name, active, country, username} = req.body
+        const newUser = await prisma.user.create({
+            data: {
+                first_name,
+                email,
+                last_name,
+                username,
+                active,
+                country
+            },
+        });
+        res.status(201).json(newUser)
+    } catch (error: any) {
+        if (error.code === 'P2002') {
+            // Prisma unique constraint violation
+            res.status(409).json({
+                error: "A user with this email or username already exists"
+            });
+            return;
+        }
+        res.status(500).json({ error: "Failed to create user" });
+        return;
+    }
 })
 
 app.get('/api/user/country', async (req, res, _) => {

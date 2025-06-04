@@ -70,7 +70,17 @@ const addUser = async () => {
         });
         
         const data = await response.json();
-        console.log(data);
+        
+        if (!response.ok) {
+            if (response.status === 409) {
+                errorMessages.value = ['A user with this email or username already exists'];
+            } else if (data.details) {
+                errorMessages.value = data.details.map((detail: any) => detail.message);
+            } else {
+                errorMessages.value = [data.error || 'Error adding user'];
+            }
+            return;
+        }
         
         // Reset form
         firstName.value = '';
@@ -82,7 +92,7 @@ const addUser = async () => {
         successMessage.value = 'User added successfully!';
     } catch (error: any) {
         console.error('Error adding user:', error);
-        errorMessages.value = error.message || ['Error adding user'];
+        errorMessages.value = [error.message || 'Error adding user'];
     } finally {
         isSubmitting.value = false;
     }
