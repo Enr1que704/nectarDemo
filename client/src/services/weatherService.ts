@@ -75,11 +75,11 @@ export const weatherService = {
             
             if (cachedData) {
                 const { data, timestamp }: CacheEntry = JSON.parse(cachedData);
-                if (now - timestamp < CACHE_DURATION_MS) {
+                if (now - timestamp < CACHE_DURATION_MS) { // add to cache if valid
                     cachedResults.push(data[0]); 
                     continue;
                 }
-                localStorage.removeItem(cacheKey);
+                localStorage.removeItem(cacheKey); // remove from cache if expired
             }
             zonesToFetch.push(zone);
         }

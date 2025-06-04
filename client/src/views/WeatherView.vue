@@ -38,7 +38,7 @@ const getStateZones = async (state: string) => {
         const stateZones = await weatherService.getStateZones(state);
         zones.value = stateZones;
         showZones.value = true;
-        weather.value = []; 
+        weather.value = [];  // clear the weather since we switched states
     } catch (error) {
         console.error('Error fetching zones:', error);
     } finally {
@@ -47,7 +47,7 @@ const getStateZones = async (state: string) => {
 };
 
 const handleStateSelect = async (state: string) => {
-    selectedZones.value = []; 
+    selectedZones.value = [];  // clear the selected zones since we switched states
     await getStateZones(state);
 };
 
@@ -56,7 +56,7 @@ const handleSelectAll = (event: Event) => {
     if (target.checked) {
         selectedZones.value = zones.value.map(zone => zone.zoneId);
     } else {
-        selectedZones.value = [];
+        selectedZones.value = [];  // clear the selected zones since we unclicked all
     }
 };
 
@@ -65,7 +65,7 @@ const fetchSelectedZonesWeather = async () => {
     isLoading.value = true;
     hasSearched.value = true;
     try {
-        const zoneData = selectedZones.value.map(zoneId => {
+        const zoneData = selectedZones.value.map(zoneId => { // we want to send both the id and the name, so we can display the name in the UI when the data returns
             const zone = zones.value.find(z => z.zoneId === zoneId);
             return {
                 id: zoneId,

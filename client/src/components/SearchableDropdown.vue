@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 interface DropdownItem {
     value: string;
@@ -25,6 +25,14 @@ const emit = defineEmits<{
 const searchQuery = ref('');
 const isDropdownOpen = ref(false);
 
+watch(() => props.modelValue, (newValue) => {
+    if (!newValue) {
+        searchQuery.value = '';
+    } else {
+        searchQuery.value = props.items.find(item => item.value === newValue)?.label || newValue;
+    }
+}, { immediate: true });
+
 const filteredItems = computed(() => {
     return props.items.filter(item => 
         item.label.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -36,7 +44,7 @@ const selectItem = (value: string) => {
     emit('update:modelValue', value);
     emit('select', value);
     isDropdownOpen.value = false;
-    searchQuery.value = '';
+    searchQuery.value = props.items.find(item => item.value === value)?.label || value;
 };
 
 const handleBlur = () => {
