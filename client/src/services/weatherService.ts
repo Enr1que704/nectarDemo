@@ -30,6 +30,11 @@ interface ZoneForecastData {
     };
 }
 
+interface ZoneBatchData {
+    id: string;
+    name: string;
+}
+
 /*
 WEATHER FLOW:
 zones/ - get all state zones
@@ -49,6 +54,36 @@ returns:
 */
 
 export const weatherService = {
+
+    async getStateZones(state: string): Promise<Zone[]> {
+        const response = await fetch(`${API_BASE_URL}/weather/stateZones?state=${state}`);
+        const zoneData: ZoneData = await response.json();
+        return zoneData.features.map(feature => ({
+            zoneId: feature.properties.id,
+            zoneName: feature.properties.name
+        }));
+    },
+
+    async getWeatherByZoneBatch(zoneData: ZoneBatchData[]): Promise<ZoneForecast[]> {
+        console.log("zoneData", zoneData);
+        const zoneIds = zoneData.map(zone => zone.id);
+        const response = await fetch(`${API_BASE_URL}/weather/zoneForecast?zoneIds=${zoneIds.join(',')}`);
+        const forecasts = await response.json();
+        
+        return forecasts.map((forecast: any, index: number) => ({
+            zoneId: zoneData[index].id,
+            zoneName: zoneData[index].name,
+            forecast: {
+                periods: forecast.properties.periods.map((period: any) => ({
+                    number: period.number,
+                    name: period.name,
+                    detailedForecast: period.detailedForecast
+                }))
+            }
+        }));
+    },
+    
+
     async getWeatherByState(state: string): Promise<ZoneForecast[]> {
         try {
             // Check cache first

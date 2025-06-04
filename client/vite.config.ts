@@ -20,5 +20,12 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     assetsDir: 'assets'
+  },
+  publicDir: 'public',
+  server: {
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: ['..']
+    }
   }
 })

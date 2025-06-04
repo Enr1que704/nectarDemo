@@ -12,12 +12,15 @@ datasource db {
 
 model User {
   id         Int      @id @default(autoincrement())
-  first_name String
-  last_name  String
-  username   String? // the `?` here allows this field to be nullable
+  first_name String   
+  last_name  String   
+  username   String?  // the `?` here allows this field to be nullable
   email      String
   country    String   // standard 2 letter country code
-  active     Boolean
+  active     Boolean  
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@index([first_name, last_name, active])
+  @@index([country])
 }

@@ -56,9 +56,10 @@ app.get('/api/user/duplicate', async (req, res, _) => {
             gt: count,
         },
         },
-    },
+    }, 
     });
-      
+    // couldn't get 
+    console.log(duplicateUsers)
     res.status(200).json(duplicateUsers)
 })
 
@@ -71,10 +72,22 @@ app.get('/api/weather/stateZones', async (req, res, _) => {
 })
 
 app.get('/api/weather/zoneForecast', async (req, res, _) => {
-    const {zoneId} = req.query;
-    const weather = await fetch(`https://api.weather.gov/zones/feature/${zoneId}/forecast`)
-    const weatherData = await weather.json()
-    res.status(200).json(weatherData)
+    const {zoneIds} = req.query;
+    if (!zoneIds || typeof zoneIds !== 'string') {
+        res.status(400).json({ error: 'zoneIds parameter is required and must be a string' });
+        return;
+    }
+    const zoneIdArray = zoneIds.split(',');
+    const forecasts = await Promise.all(
+        zoneIdArray.map(async (zoneId) => {
+            const weather = await fetch(`https://api.weather.gov/zones/feature/${zoneId}/forecast`);
+            return weather.json();
+        })
+    );
+    for (const [index, forecast] of forecasts.entries()) {
+        forecast.name = zoneIdArray[index];
+    }
+    res.status(200).json(forecasts);
 })
 
 app.get('/api/health', (_, res, __) => {

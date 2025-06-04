@@ -97,13 +97,13 @@ const showDuplicates = async () => {
         <div v-else-if="users.length > 0" class="user-grid">
             <UserCard
                 v-for="user in users"
-                :key="user.id"
-                :user="user"
+                v-bind:key="user.id"
+                v-bind:user="user"
             />
         </div>
 
         <Modal 
-            :is-open="isModalOpen" 
+            v-bind:is-open="isModalOpen" 
             title="Duplicate Users"
             @close="isModalOpen = false"
         >
@@ -117,8 +117,8 @@ const showDuplicates = async () => {
             <div v-else-if="duplicates.length > 0" class="user-grid">
                 <DataCard
                     v-for="duplicate in duplicates"
-                    :key="duplicate.name"
-                    :data="duplicate"
+                    v-bind:key="duplicate.name"
+                    v-bind:data="duplicate"
                 />
             </div>
             <div v-else class="no-duplicates">
