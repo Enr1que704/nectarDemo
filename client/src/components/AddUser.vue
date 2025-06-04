@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { userService } from '../services/userService';
+import type { User } from '../types/user';
 
 const firstName = ref('');
 const lastName = ref('');
@@ -40,8 +42,6 @@ const validateInput = () => {
     return true;
 }
 
-
-
 const addUser = async () => {
     isSubmitting.value = true;
     successMessage.value = '';
@@ -52,33 +52,16 @@ const addUser = async () => {
             return;
         }
 
-        const response = await fetch('http://localhost:3001/api/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                first_name: firstName.value,
-                last_name: lastName.value, 
-                email: email.value,
-                username: userName.value,
-                country: country.value,
-                active: active.value
-            }),
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            if (response.status === 409) {
-                errorMessages.value = ['A user with this email or username already exists'];
-            } else if (data.details) {
-                errorMessages.value = data.details.map((detail: any) => detail.message);
-            } else {
-                errorMessages.value = [data.error || 'Error adding user'];
-            }
-            return;
-        }
+        const userData: Omit<User, 'id'> = {
+            first_name: firstName.value,
+            last_name: lastName.value,
+            email: email.value,
+            username: userName.value,
+            country: country.value,
+            active: active.value
+        };
+
+        await userService.addUser(userData);
         
         // Reset form
         firstName.value = '';
@@ -86,11 +69,16 @@ const addUser = async () => {
         email.value = '';
         country.value = '';
         active.value = true;
+        userName.value = '';
         
         successMessage.value = 'User added successfully!';
     } catch (error: any) {
         console.error('Error adding user:', error);
-        errorMessages.value = [error.message || 'Error adding user'];
+        if (error.message?.includes('409')) {
+            errorMessages.value = ['A user with this email or username already exists'];
+        } else {
+            errorMessages.value = [error.message || 'Error adding user'];
+        }
     } finally {
         isSubmitting.value = false;
     }
