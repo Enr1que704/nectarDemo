@@ -56,10 +56,12 @@ const showDuplicates = async () => {
     error.value = undefined;
     try {
         const users = await userService.getDuplicateUsers(parseInt(count.value), active.value);
-        duplicates.value = users.map((user: { first_name: string; last_name: string; _count: { first_name: number } }) => ({
-            name: user.first_name + ' ' + user.last_name,
-            count: user._count.first_name
-        }));
+        console.log("users", users);
+        duplicates.value = users;
+        // duplicates.value = users.map((user: { first_name: string; last_name: string; _count: { first_name: number } }) => ({
+        //     name: user.first_name + ' ' + user.last_name,
+        //     count: user._count.first_name
+        // }));
     } catch (err) {
         error.value = 'Failed to fetch duplicates. Please try again later.';
         console.error('Error fetching duplicates:', err);
@@ -117,8 +119,9 @@ const showDuplicates = async () => {
             <div v-else-if="duplicates.length > 0" class="user-grid">
                 <DataCard
                     v-for="duplicate in duplicates"
-                    v-bind:key="duplicate.name"
-                    v-bind:data="duplicate"
+                    v-bind:key="duplicate[0]"
+                    v-bind:data="duplicate[0]"
+                    v-bind:count="duplicate[1]"
                 />
             </div>
             <div v-else class="no-duplicates">

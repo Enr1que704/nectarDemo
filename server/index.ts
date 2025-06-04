@@ -60,7 +60,16 @@ app.get('/api/user/duplicate', async (req, res, _) => {
     });
     // couldn't get 
     console.log(duplicateUsers)
-    res.status(200).json(duplicateUsers)
+    let dupclicateMap = new Map<string, number>();
+    for (const user of duplicateUsers) {
+        let key = `${user.first_name.toLowerCase()} ${user.last_name.toLowerCase()}`;
+        if (dupclicateMap.has(key)) {
+            dupclicateMap.set(key, (dupclicateMap.get(key) || 0) + user._count.first_name);
+        } else {
+            dupclicateMap.set(key, user._count.first_name);
+        }
+    }
+    res.status(200).json(Array.from(dupclicateMap.entries()));
 })
 
 

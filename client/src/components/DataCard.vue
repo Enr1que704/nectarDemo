@@ -3,6 +3,7 @@ import type { User } from '../types/user';
 
 const props = defineProps<{
     data: any;
+    count: number;
 }>();
 console.log(props.data);
 </script>
@@ -10,8 +11,8 @@ console.log(props.data);
 <template>
     <div class="data-card">
         <div class="data-info">
-            <h3 class="data-name">{{ data.name }}</h3>
-            <p class="data-count">Duplicate Count: {{ data.count }}</p>
+            <h3 class="data-name">{{ data }}</h3>
+            <p class="data-count">Duplicate Count: {{ count }}</p>
         </div>
     </div>
 </template>
