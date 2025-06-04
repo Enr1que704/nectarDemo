@@ -6,7 +6,6 @@ import { z } from 'zod'
 const prisma = new PrismaClient();
 const app = express()
 
-// User validation schema
 const userSchema = z.object({
     first_name: z.string().min(1, "First name is required").max(50, "First name is too long"),
     last_name: z.string().min(1, "Last name is required").max(50, "Last name is too long"),
@@ -16,11 +15,44 @@ const userSchema = z.object({
     country: z.string().min(2, "Country code is required").max(2, "Country code must be 2 characters")
 });
 
-// Validation middleware
+const stateSchema = z.object({
+    state: z.string()
+        .min(2, "State code must be at least 2 characters")
+        .max(2, "State code must be 2 characters")
+        .regex(/^[A-Z]{2}$/, "State code must be 2 uppercase letters")
+});
+
+const zoneIdsSchema = z.object({
+    zoneIds: z.string()
+        .min(1, "At least one zone ID is required")
+        .regex(/^[A-Z]{2}[CZ]\d{3}(,[A-Z]{2}[CZ]\d{3})*$/, "Invalid zone ID format. Expected format: XXC000,XXC001")
+});
+
 const validateUser = (req: express.Request, res: express.Response, next: express.NextFunction): void => {
     try {
         const validatedData = userSchema.parse(req.body);
-        req.body = validatedData; // Replace request body with validated data
+        req.body = validatedData; 
+        next();
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(400).json({
+                error: "Validation failed",
+                details: error.errors.map(err => ({
+                    field: err.path.join('.'),
+                    message: err.message
+                }))
+            });
+            return;
+        }
+        res.status(500).json({ error: "Internal server error" });
+        return;
+    }
+};
+
+const validateQuery = (schema: z.ZodSchema) => (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+    try {
+        const validatedData = schema.parse(req.query);
+        req.query = validatedData;
         next();
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -63,13 +95,6 @@ app.post('/api/users', validateUser, async (req, res, _) => {
         });
         res.status(201).json(newUser)
     } catch (error: any) {
-        if (error.code === 'P2002') {
-            // Prisma unique constraint violation
-            res.status(409).json({
-                error: "A user with this email or username already exists"
-            });
-            return;
-        }
         res.status(500).json({ error: "Failed to create user" });
         return;
     }
@@ -127,30 +152,43 @@ app.get('/api/user/duplicate', async (req, res, _) => {
 })
 
 
-app.get('/api/weather/stateZones', async (req, res, _) => {
-    const {state} = req.query;
-    const weather = await fetch(`https://api.weather.gov/zones/?area=${state}&type=forecast&include_geometry=false`)
-    const weatherData = await weather.json()
-    res.status(200).json(weatherData)
+app.get('/api/weather/stateZones', validateQuery(stateSchema), async (req, res, _) => {
+    try {
+        const {state} = req.query;
+        const weather = await fetch(`https://api.weather.gov/zones/?area=${state}&type=forecast&include_geometry=false`);
+        if (!weather.ok) {
+            res.status(weather.status).json({ error: "Failed to fetch weather data" });
+            return;
+        }
+        const weatherData = await weather.json();
+        res.status(200).json(weatherData);
+    } catch (error) {
+        console.error('Weather API error:', error);
+        res.status(500).json({ error: "Failed to fetch weather data" });
+    }
 })
 
-app.get('/api/weather/zoneForecast', async (req, res, _) => {
-    const {zoneIds} = req.query;
-    if (!zoneIds || typeof zoneIds !== 'string') {
-        res.status(400).json({ error: 'zoneIds parameter is required and must be a string' });
-        return;
+app.get('/api/weather/zoneForecast', validateQuery(zoneIdsSchema), async (req, res, _) => {
+    try {
+        const {zoneIds} = req.query;
+        const zoneIdArray = (zoneIds as string).split(',');
+        const forecasts = await Promise.all(
+            zoneIdArray.map(async (zoneId) => {
+                const weather = await fetch(`https://api.weather.gov/zones/feature/${zoneId}/forecast`);
+                if (!weather.ok) {
+                    throw new Error(`Failed to fetch forecast for zone ${zoneId}`);
+                }
+                return weather.json();
+            })
+        );
+        for (const [index, forecast] of forecasts.entries()) {
+            forecast.name = zoneIdArray[index];
+        }
+        res.status(200).json(forecasts);
+    } catch (error) {
+        console.error('Weather API error:', error);
+        res.status(500).json({ error: "Failed to fetch weather forecasts" });
     }
-    const zoneIdArray = zoneIds.split(',');
-    const forecasts = await Promise.all(
-        zoneIdArray.map(async (zoneId) => {
-            const weather = await fetch(`https://api.weather.gov/zones/feature/${zoneId}/forecast`);
-            return weather.json();
-        })
-    );
-    for (const [index, forecast] of forecasts.entries()) {
-        forecast.name = zoneIdArray[index];
-    }
-    res.status(200).json(forecasts);
 })
 
 app.get('/api/health', (_, res, __) => {

@@ -51,6 +51,7 @@
               <li>National Weather Service API integration</li>
               <li>State-based zone lookups</li>
               <li>Multi-zone forecast retrieval</li>
+              <li>Result caching for quick lookups</li>
             </ul>
           </div>
         </div>
