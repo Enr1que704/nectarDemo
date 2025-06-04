@@ -63,7 +63,7 @@
             <h3>Error Handling</h3>
             <ul>
               <li>Comprehensive error catching</li>
-              <li>Graceful shutdown procedures</li>
+              <li>Zod request validation</li>
               <li>Request logging with timestamps</li>
             </ul>
           </div>
