@@ -168,9 +168,9 @@ const clearList = () => {
             </div>
         </div>
         <div v-else-if="hasSearched">
-            <h1 class="loading-text">No weather data found.</h1>
+            <h1 class="loading-text">No weather data found. Please try again later.</h1>
             <!-- !! Uncomment for a good time !!-->
-            <h1 class="loading-text">Play a game to pass the time!</h1>
+            <h1 class="loading-text">Play a game while you wait!</h1>
             <div class="game-container">
                 <iframe 
                     src="/game/index.html" 
@@ -325,7 +325,7 @@ const clearList = () => {
 
 .game-frame {
     width: 100%;
-    height: 600px;
+    height: 300px;
     border: none;
     border-radius: var(--border-radius-large);
     background-color: #000;

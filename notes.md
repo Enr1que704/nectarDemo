@@ -5,6 +5,5 @@ v-model is what connects refs (state) to a component
 
 
 
-Fix: Ensure duplicate counter is case insensitive
 
 

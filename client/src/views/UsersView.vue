@@ -83,7 +83,7 @@ const showDuplicates = async () => {
                     v-bind:items="COUNTRIES"
                     v-model="country"
                     @select="handleCountrySelect"
-                    prompt="Search by Country..."
+                    placeholder="Search by Country..."
                 />
                 <button class="clear-button" @click="clearList">
                     Clear

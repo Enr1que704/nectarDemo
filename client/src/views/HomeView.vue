@@ -4,7 +4,7 @@
 
 <template>
   <div class="greetings">
-    <h1>Welcome to the Home Page</h1>
+    <h1>Welcome to the Nectar Technical Assessment</h1>
   </div>
 </template>
 
