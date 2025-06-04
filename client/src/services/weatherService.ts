@@ -35,23 +35,6 @@ interface ZoneBatchData {
     name: string;
 }
 
-/*
-WEATHER FLOW:
-zones/ - get all state zones
-- area (State)
-- type (forecast)
-- include_geometry (false)
-returns:
-- id (zone)
-- name (area, such as Southeast Utah)
-
-zones/type/zoneId/forecast/
-- zoneId (zone)
-- type (forecast)
-returns:
-- periods (array of objects)
-
-*/
 
 export const weatherService = {
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// No setup needed for simple welcome message
 </script>
 
 <template>
@@ -95,7 +94,7 @@
 }
 
 .hero-section h1 {
-  color: #1A2238;  /* Nectar Navy */
+  color: #1A2238;  
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }

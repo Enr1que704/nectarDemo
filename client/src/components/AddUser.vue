@@ -11,8 +11,6 @@ const isSubmitting = ref(false);
 const successMessage = ref('');
 const errorMessages = ref<string[]>([]);
 
-// TODO: 1. Investigate zod?
-// TODO: 2. Add validation field by field, not at the end (because that's annoying)
 const validateInput = () => {
     const nameRegex = /^[A-Za-z]+$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -143,7 +141,6 @@ const addUser = async () => {
                         v-model="userName"
                     />
                 </div>
-                <!-- TODO: Add country dropdown -->
                 <div class="form-group">
                     <label for="country">Country</label>
                     <input 
@@ -164,7 +161,6 @@ const addUser = async () => {
                         <span>Active User</span>
                     </label>
                 </div>
-                <!-- TODO: Disable button until all fields are filled or valid -->
                 <button 
                     type="submit" 
                     class="submit-button"
@@ -186,7 +182,6 @@ const addUser = async () => {
             </div>
         </div>
     </div>
-    <!-- <UserList /> -->
 </template>
 
 <style scoped>

@@ -5,14 +5,13 @@ const props = defineProps<{
     data: any;
     count: number;
 }>();
-console.log(props.data);
 </script>
 
 <template>
     <div class="data-card">
         <div class="data-info">
-            <h3 class="data-name">{{ data }}</h3>
-            <p class="data-count">Duplicate Count: {{ count }}</p>
+            <h3 class="data-name">{{ props.data }}</h3>
+            <p class="data-count">Duplicate Count: {{ props.count }}</p>
         </div>
     </div>
 </template>

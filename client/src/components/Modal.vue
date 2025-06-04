@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// the slot system is a placeholder for the modal content, so anything can go there, it just needs to be placed between the Modal tags wherever it gets called
 
 defineProps<{
     isOpen: boolean;

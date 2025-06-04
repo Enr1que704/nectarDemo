@@ -55,10 +55,6 @@ const showDuplicates = async () => {
     try {
         const users = await userService.getDuplicateUsers(parseInt(count.value), active.value);
         duplicates.value = users;
-        // duplicates.value = users.map((user: { first_name: string; last_name: string; _count: { first_name: number } }) => ({
-        //     name: user.first_name + ' ' + user.last_name,
-        //     count: user._count.first_name
-        // }));
     } catch (err) {
         error.value = 'Failed to fetch duplicates. Please try again later.';
         console.error('Error fetching duplicates:', err);
