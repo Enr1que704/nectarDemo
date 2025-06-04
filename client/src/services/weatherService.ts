@@ -65,28 +65,62 @@ export const weatherService = {
     },
 
     async getWeatherByZoneBatch(zoneData: ZoneBatchData[]): Promise<ZoneForecast[]> {
-        console.log("zoneData", zoneData);
-        const zoneIds = zoneData.map(zone => zone.id);
+        const now = Date.now();
+        const zonesToFetch: ZoneBatchData[] = [];
+        const cachedResults: ZoneForecast[] = [];
+
+        for (const zone of zoneData) {
+            const cacheKey = `${CACHE_KEY_PREFIX}${zone.id}`;
+            const cachedData = localStorage.getItem(cacheKey);
+            
+            if (cachedData) {
+                const { data, timestamp }: CacheEntry = JSON.parse(cachedData);
+                if (now - timestamp < CACHE_DURATION_MS) {
+                    cachedResults.push(data[0]); 
+                    continue;
+                }
+                localStorage.removeItem(cacheKey);
+            }
+            zonesToFetch.push(zone);
+        }
+
+        if (zonesToFetch.length === 0) {
+            return cachedResults;
+        }
+
+        const zoneIds = zonesToFetch.map(zone => zone.id);
         const response = await fetch(`${API_BASE_URL}/weather/zoneForecast?zoneIds=${zoneIds.join(',')}`);
         const forecasts = await response.json();
         
-        return forecasts.map((forecast: any, index: number) => ({
-            zoneId: zoneData[index].id,
-            zoneName: zoneData[index].name,
-            forecast: {
-                periods: forecast.properties.periods.map((period: any) => ({
-                    number: period.number,
-                    name: period.name,
-                    detailedForecast: period.detailedForecast
-                }))
-            }
-        }));
+        const newForecasts = forecasts.map((forecast: any, index: number) => {
+            const zoneForecast: ZoneForecast = {
+                zoneId: zonesToFetch[index].id,
+                zoneName: zonesToFetch[index].name,
+                forecast: {
+                    periods: forecast.properties.periods.map((period: any) => ({
+                        number: period.number,
+                        name: period.name,
+                        detailedForecast: period.detailedForecast
+                    }))
+                }
+            };
+
+            const cacheKey = `${CACHE_KEY_PREFIX}${zoneForecast.zoneId}`;
+            const cacheEntry: CacheEntry = {
+                data: [zoneForecast],
+                timestamp: now
+            };
+            localStorage.setItem(cacheKey, JSON.stringify(cacheEntry));
+
+            return zoneForecast;
+        });
+
+        return [...cachedResults, ...newForecasts];
     },
     
-
+    // DEPRECATED
     async getWeatherByState(state: string): Promise<ZoneForecast[]> {
         try {
-            // Check cache first
             const cacheKey = `${CACHE_KEY_PREFIX}${state}`;
             const cachedData = localStorage.getItem(cacheKey);
             
@@ -94,39 +128,32 @@ export const weatherService = {
                 const { data, timestamp }: CacheEntry = JSON.parse(cachedData);
                 const now = Date.now();
                 
-                // If cache is still valid, return cached data
                 if (now - timestamp < CACHE_DURATION_MS) {
                     return data;
                 }
                 
-                // If cache is expired, remove it
                 localStorage.removeItem(cacheKey);
             }
 
-            // If no cache or expired, fetch new data
             const zoneResponse = await fetch(`${API_BASE_URL}/weather/stateZones?state=${state}`);
             const zoneData: ZoneData = await zoneResponse.json();
             
-            // Transform features into zones
             const zones: Zone[] = zoneData.features.map(feature => ({
                 zoneId: feature.properties.id,
                 zoneName: feature.properties.name
             }));
             
-            // Fetch all zone forecasts in parallel
             const zoneForecasts = await Promise.all(
                 zones.map(async (zone) => {
                     const response = await fetch(`${API_BASE_URL}/weather/zoneForecast?zoneId=${zone.zoneId}`);
                     const forecastData: ZoneForecastData = await response.json();
                     
-                    // Transform periods data
                     const periods: Period[] = forecastData.properties.periods.map(period => ({
                         number: period.number,
                         name: period.name,
                         detailedForecast: period.detailedForecast
                     }));
 
-                    // Create the zone forecast object
                     return {
                         zoneId: zone.zoneId,
                         zoneName: zone.zoneName,
@@ -135,7 +162,6 @@ export const weatherService = {
                 })
             );
             
-            // Cache the new data
             const cacheEntry: CacheEntry = {
                 data: zoneForecasts,
                 timestamp: Date.now()
@@ -149,12 +175,10 @@ export const weatherService = {
         }
     },
 
-    // Optional: Add a method to clear the cache
     clearCache(state?: string) {
         if (state) {
             localStorage.removeItem(`${CACHE_KEY_PREFIX}${state}`);
         } else {
-            // Clear all weather cache entries
             Object.keys(localStorage)
                 .filter(key => key.startsWith(CACHE_KEY_PREFIX))
                 .forEach(key => localStorage.removeItem(key));

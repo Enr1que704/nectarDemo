@@ -5,3 +5,5 @@ literals can be passed strictly as an attribute, such as placeholder="Enter valu
 
 
 Fix: Ensure duplicate counter is case insensitive
+
+

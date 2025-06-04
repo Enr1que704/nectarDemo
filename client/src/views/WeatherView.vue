@@ -38,7 +38,7 @@ const getStateZones = async (state: string) => {
         const stateZones = await weatherService.getStateZones(state);
         zones.value = stateZones;
         showZones.value = true;
-        weather.value = []; // Clear any existing weather data
+        weather.value = []; 
     } catch (error) {
         console.error('Error fetching zones:', error);
     } finally {
@@ -47,7 +47,7 @@ const getStateZones = async (state: string) => {
 };
 
 const handleStateSelect = async (state: string) => {
-    selectedZones.value = []; // Clear selected zones
+    selectedZones.value = []; 
     await getStateZones(state);
 };
 
