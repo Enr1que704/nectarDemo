@@ -8,14 +8,14 @@ defineProps<{
 
 <template>
     <div class="user-card">
+        <div :class="['status-banner', user.active ? 'active' : 'inactive']">
+            {{ user.active ? 'Active' : 'Inactive' }}
+        </div>
         <div class="user-info">
             <h3 class="user-name">{{ user.first_name }} {{ user.last_name }}</h3>
             <p class="user-email">{{ user.email }}</p>
             <p class="user-country">Country: {{ user.country }}</p>
             <p class="user-username">Username: {{ user.username ? user.username : 'N/A' }}</p>
-            <span :class="['status-badge', user.active ? 'active' : 'inactive']">
-                {{ user.active ? 'Active' : 'Inactive' }}
-            </span>
         </div>
     </div>
 </template>
@@ -25,8 +25,9 @@ defineProps<{
     background: var(--background-color);
     border-radius: var(--border-radius-medium);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    padding: var(--spacing-medium);
+    padding: 0;
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    overflow: hidden;
 }
 
 .user-card:hover {
@@ -52,21 +53,25 @@ defineProps<{
     font-size: 0.9rem;
 }
 
-.status-badge {
-    display: inline-block;
+.status-banner {
+    width: 100%;
     padding: var(--spacing-small) var(--spacing-medium);
-    border-radius: 999px;
     font-size: 0.8rem;
     font-weight: 500;
+    text-align: center;
 }
 
-.status-badge.active {
+.status-banner.active {
     background-color: rgba(242, 106, 62, 0.1);
     color: var(--primary-color);
 }
 
-.status-badge.inactive {
+.status-banner.inactive {
     background-color: rgba(26, 34, 56, 0.1);
     color: var(--text-color);
+}
+
+.user-info {
+    padding: var(--spacing-medium);
 }
 </style> 

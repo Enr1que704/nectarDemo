@@ -34,12 +34,10 @@ const fetchUsers = async () => {
 
 const handleCountrySelect = (value: string) => {
     country.value = value;
-    console.log(country.value);
     fetchUsers();
 }
 
 const clearList = () => {
-    console.log('clearing list');
     country.value = '';
     users.value = [];
     error.value = undefined;
@@ -56,7 +54,6 @@ const showDuplicates = async () => {
     error.value = undefined;
     try {
         const users = await userService.getDuplicateUsers(parseInt(count.value), active.value);
-        console.log("users", users);
         duplicates.value = users;
         // duplicates.value = users.map((user: { first_name: string; last_name: string; _count: { first_name: number } }) => ({
         //     name: user.first_name + ' ' + user.last_name,

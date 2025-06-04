@@ -41,6 +41,7 @@ export const userService = {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            // console.log(await response.json());
             return await response.json();
         } catch (error) {
             console.error('Error getting duplicate users:', error);

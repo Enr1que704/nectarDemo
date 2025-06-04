@@ -50,26 +50,35 @@ app.get('/api/user/duplicate', async (req, res, _) => {
     _count: {
         first_name: true,
     },
-    having: {
-        first_name: {
-        _count: {
-            gt: count,
-        },
-        },
-    }, 
+    // This is the original query, but when it was summing the groups, it would only include the lower case version if that group was above the count threshold, but we want all the duplicates
+    // having: {
+    //     first_name: {
+    //     _count: {
+    //         gt: count,
+    //     },
+    //     },
+    // }, 
     });
-    // couldn't get 
-    console.log(duplicateUsers)
-    let dupclicateMap = new Map<string, number>();
+
+    console.log("duplicateUsers", duplicateUsers)
+    let duplicateMap = new Map<string, number>();
     for (const user of duplicateUsers) {
         let key = `${user.first_name.toLowerCase()} ${user.last_name.toLowerCase()}`;
-        if (dupclicateMap.has(key)) {
-            dupclicateMap.set(key, (dupclicateMap.get(key) || 0) + user._count.first_name);
+        if (duplicateMap.has(key)) {
+            duplicateMap.set(key, (duplicateMap.get(key) || 0) + user._count.first_name);
         } else {
-            dupclicateMap.set(key, user._count.first_name);
+            duplicateMap.set(key, user._count.first_name);
         }
     }
-    res.status(200).json(Array.from(dupclicateMap.entries()));
+    
+    const filteredDuplicates = Array.from(duplicateMap.entries())
+        .filter(([_, total]) => total > count)
+        .map(([name, count]) => {
+            const words = name.split(' ');
+            const capitalizedName = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            return [capitalizedName, count];
+        });
+    res.status(200).json(filteredDuplicates);
 })
 
 
